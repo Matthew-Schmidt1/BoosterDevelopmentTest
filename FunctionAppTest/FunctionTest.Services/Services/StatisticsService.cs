@@ -1,11 +1,12 @@
-﻿using FunctionTest.Services.Interfaces;
+﻿using FunctionTest.Models;
+using FunctionTest.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Data;
 using System.Text;
 
 namespace FunctionTest.Services
 {
-    internal class StatisticsService : IStatisticsService
+    public class StatisticsService : IStatisticsService
     {
         private readonly ICountedObjectManager<string> _WordManager;
         private readonly ICountedObjectManager<char> _CharacterManager;
@@ -50,21 +51,19 @@ namespace FunctionTest.Services
         }
 
 
-        public DataTable TotalNumberOfCharactersAndWords()
+        public ResultsTable TotalNumberOfCharactersAndWords()
         {
             _Logger.LogTrace("Starting {MethodName}", nameof(TotalNumberOfCharactersAndWords));
-            DataTable dataTable = new DataTable(nameof(TotalNumberOfCharactersAndWords));
-            dataTable.Columns.Add("Words", typeof(int));
-            dataTable.Columns.Add("Characters", typeof(int));
-            DataRow row = dataTable.NewRow();
-            row["Words"] = _WordManager.GetAllItems().Count();
-            row["Characters"] = _CharacterManager.GetAllItems().Count();
-            dataTable.Rows.Add(row);
+            ResultsTable dataTable = new ResultsTable(nameof(TotalNumberOfCharactersAndWords));
+            dataTable.ColumnNames[0]="Words";
+            dataTable.ColumnNames[1] = "Characters";
+            dataTable.TableData["Words"] = _WordManager.GetAllItems().Count();
+            dataTable.TableData["Characters"] = _CharacterManager.GetAllItems().Count();
             _Logger.LogTrace("Finishing {MethodName}", nameof(TotalNumberOfCharactersAndWords));
             return dataTable;
         }
 
-        public DataTable GetLargestWords(int number)
+        public ResultsTable GetLargestWords(int number)
         {
             _Logger.LogTrace("Starting {MethodName}", nameof(GetLargestWords));
             var dataTable = GetOrderDataTable(number, true);
@@ -73,25 +72,21 @@ namespace FunctionTest.Services
             return dataTable;
         }
 
-        private DataTable GetOrderDataTable(int number, bool largest)
+        private ResultsTable GetOrderDataTable(int number, bool largest)
         {
             _Logger.LogTrace("Starting {MethodName}", nameof(GetOrderDataTable));
-            DataTable dataTable = new DataTable();
-            dataTable.Columns.Add("Words", typeof(string));
-            dataTable.Columns.Add("Length", typeof(int));
-
+            ResultsTable dataTable = new ResultsTable(nameof(GetOrderDataTable));
+            dataTable.ColumnNames[0] = "Words";
+            dataTable.ColumnNames[1] = "Length";
             foreach (var item in _WordManager.GetOrderByLength(number, largest))
             {
-                DataRow row = dataTable.NewRow();
-                row["Words"] = item.Key;
-                row["Length"] = item.Value;
-                dataTable.Rows.Add(row);
+                dataTable.TableData.Add(item.Key,item.Value);
             }
             _Logger.LogTrace("Finishing {MethodName}", nameof(GetOrderDataTable));
             return dataTable;
         }
 
-        public DataTable GetSmallestWords(int number)
+        public ResultsTable GetSmallestWords(int number)
         {
             _Logger.LogTrace("Starting {MethodName}", nameof(GetSmallestWords));
             var dataTable = GetOrderDataTable(number, false);
@@ -100,53 +95,45 @@ namespace FunctionTest.Services
             return dataTable;
         }
 
-        public DataTable MostFrequencyWord(int number)
+        public ResultsTable MostFrequencyWord(int number)
         {
             _Logger.LogTrace("Starting {MethodName}", nameof(MostFrequencyWord));
-            DataTable dataTable = new DataTable(nameof(GetAllCharactersFrequency));
-            dataTable.Columns.Add("Words", typeof(string));
-            dataTable.Columns.Add("Length", typeof(int));
-
+            ResultsTable dataTable = new ResultsTable(nameof(GetAllCharactersFrequency));
+            dataTable.ColumnNames[0] = "Words";
+            dataTable.ColumnNames[1] = "Length";
             foreach (var item in _WordManager.GetOrderByCount(number, true))
             {
-                DataRow row = dataTable.NewRow();
-                row["Words"] = item.Key;
-                row["Length"] = item.Value;
-                dataTable.Rows.Add(row);
+                dataTable.TableData.Add(item.Key, item.Value);
             }
             _Logger.LogTrace("Finishing {MethodName}", nameof(MostFrequencyWord));
             return dataTable;
         }
 
-        public DataTable GetAllCharactersFrequency()
+        public ResultsTable GetAllCharactersFrequency()
         {
             _Logger.LogTrace("Starting {MethodName}", nameof(GetAllCharactersFrequency));
-            DataTable dataTable = new DataTable(nameof(GetAllCharactersFrequency));
-            dataTable.Columns.Add("Character", typeof(string));
-            dataTable.Columns.Add("Count", typeof(int));
+            ResultsTable dataTable = new ResultsTable(nameof(GetAllCharactersFrequency));
+            dataTable.ColumnNames[0] = "Character";
+            dataTable.ColumnNames[1] = "Count";
             foreach (var item in _CharacterManager.GetOrderByCount(_CharacterManager.GetAllItems().Count(), true))
             {
-                DataRow row = dataTable.NewRow();
-                row["Character"] = item.Key;
-                row["Count"] = item.Value;
-                dataTable.Rows.Add(row);
+                dataTable.TableData.Add(item.Key.ToString(), item.Value);
             }
             _Logger.LogTrace("Finishing {MethodName}", nameof(GetAllCharactersFrequency));
             return dataTable;
         }
 
-
-        public string ConvertDataTableToString(DataTable dt)
-        {
-            _Logger.LogTrace("Starting {MethodName}", nameof(ConvertDataTableToString));
-            StringBuilder str = new StringBuilder();
-            str.AppendLine(dt.TableName);
-            str.AppendLine(string.Join(" &#9;&#9;| ", dt.Columns.OfType<DataColumn>().Select(x => string.Join(" , ", x.ColumnName))));
-            str.AppendLine(string.Join(Environment.NewLine, dt.Rows.OfType<DataRow>().Select(x => string.Join(" &#9;&#9;| ", x.ItemArray))));
-            str.AppendLine();
-            _Logger.LogTrace("Finishing {MethodName}", nameof(ConvertDataTableToString));
-            return str.ToString();
-        }
+        //public string ConvertDataTableToString(ResultsTable dt)
+        //{
+        //    _Logger.LogTrace("Starting {MethodName}", nameof(ConvertDataTableToString));
+        //    StringBuilder str = new StringBuilder();
+        //    str.AppendLine(dt.TableName);
+        //    str.AppendLine(string.Join(" &#9;&#9;| ", dt.Columns.OfType<DataColumn>().Select(x => string.Join(" , ", x.ColumnName))));
+        //    str.AppendLine(string.Join(Environment.NewLine, dt.Rows.OfType<DataRow>().Select(x => string.Join(" &#9;&#9;| ", x.ItemArray))));
+        //    str.AppendLine();
+        //    _Logger.LogTrace("Finishing {MethodName}", nameof(ConvertDataTableToString));
+        //    return str.ToString();
+        //}
 
         public void ResetService()
         {

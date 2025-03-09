@@ -1,3 +1,4 @@
+using FunctionTest.Models;
 using FunctionTest.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,13 +31,13 @@ namespace FunctionTest
             if(!int.TryParse(bufferSize, out int bufferSizeInteger)) return new BadRequestObjectResult("BufferSize has to be a integer");
             var dataString = await _WordStreamService.GetStreamDataAsync(bufferSizeInteger);
             await _StatisticsService.ConsumeString(dataString);
-            List<string> data = new List<string>();
+            List<ResultsTable> data = new List<ResultsTable>();
 
-            data.Add(_StatisticsService.ConvertDataTableToString(_StatisticsService.TotalNumberOfCharactersAndWords()));
-            data.Add(_StatisticsService.ConvertDataTableToString(_StatisticsService.GetLargestWords(5)));
-            data.Add(_StatisticsService.ConvertDataTableToString(_StatisticsService.GetSmallestWords(5)));
-            data.Add(_StatisticsService.ConvertDataTableToString(_StatisticsService.MostFrequencyWord(10)));
-            data.Add(_StatisticsService.ConvertDataTableToString(_StatisticsService.GetAllCharactersFrequency()));
+            data.Add(_StatisticsService.TotalNumberOfCharactersAndWords());
+            data.Add(_StatisticsService.GetLargestWords(5));
+            data.Add(_StatisticsService.GetSmallestWords(5));
+            data.Add(_StatisticsService.MostFrequencyWord(10));
+            data.Add(_StatisticsService.GetAllCharactersFrequency());
             _Logger.LogDebug("Finishing {MethodName}", nameof(GetAll));
             return new OkObjectResult(data);
         }
@@ -52,9 +53,9 @@ namespace FunctionTest
             if (!int.TryParse(bufferSize, out int bufferSizeInteger)) return new BadRequestObjectResult("BufferSize has to be a integer");
             var dataString = await _WordStreamService.GetStreamDataAsync(bufferSizeInteger);
             await _StatisticsService.ConsumeString(dataString);
-            List<string> data = new List<string>();
+            List<ResultsTable> data = new List<ResultsTable>();
 
-            data.Add(_StatisticsService.ConvertDataTableToString(_StatisticsService.TotalNumberOfCharactersAndWords()));
+            data.Add(_StatisticsService.TotalNumberOfCharactersAndWords());
             _Logger.LogDebug("Finishing {MethodName}", nameof(TotalNumberOfCharactersAndWords));
             return new OkObjectResult(data);
         }
@@ -75,9 +76,8 @@ namespace FunctionTest
 
             var dataString = await _WordStreamService.GetStreamDataAsync(bufferSizeInteger);
             await _StatisticsService.ConsumeString(dataString);
-            List<string> data = new List<string>();
-
-            data.Add(_StatisticsService.ConvertDataTableToString(_StatisticsService.GetLargestWords(numberInteger)));
+            List<ResultsTable> data = new List<ResultsTable>();
+            data.Add(_StatisticsService.GetLargestWords(numberInteger));
             _Logger.LogDebug("Finishing {MethodName}", nameof(GetLargestWords));
             return new OkObjectResult(data);
         }
@@ -98,9 +98,9 @@ namespace FunctionTest
 
             var dataString = await _WordStreamService.GetStreamDataAsync(bufferSizeInteger);
             await _StatisticsService.ConsumeString(dataString);
-            List<string> data = new List<string>();
+            List<ResultsTable> data = new List<ResultsTable>();
 
-            data.Add(_StatisticsService.ConvertDataTableToString(_StatisticsService.GetSmallestWords(numberInteger)));
+            data.Add(_StatisticsService.GetSmallestWords(numberInteger));
             _Logger.LogDebug("Finishing {MethodName}", nameof(GetSmallestWords));
             return new OkObjectResult(data);
         }
@@ -121,9 +121,9 @@ namespace FunctionTest
 
             var dataString = await _WordStreamService.GetStreamDataAsync(bufferSizeInteger);
             await _StatisticsService.ConsumeString(dataString);
-            List<string> data = new List<string>();
+            List<ResultsTable> data = new List<ResultsTable>();
 
-            data.Add(_StatisticsService.ConvertDataTableToString(_StatisticsService.MostFrequencyWord(numberInteger)));
+            data.Add(_StatisticsService.MostFrequencyWord(numberInteger));
             _Logger.LogDebug("Finishing {MethodName}", nameof(MostFrequencyWord));
             return new OkObjectResult(data);
         }
@@ -140,9 +140,9 @@ namespace FunctionTest
             var dataString = await _WordStreamService.GetStreamDataAsync(bufferSizeInteger);
             
             await _StatisticsService.ConsumeString(dataString);
-            List<string> data = new List<string>();
+            List<ResultsTable> data = new List<ResultsTable>();
 
-            data.Add(_StatisticsService.ConvertDataTableToString(_StatisticsService.GetAllCharactersFrequency()));
+            data.Add(_StatisticsService.GetAllCharactersFrequency());
             _Logger.LogDebug("Finishing {MethodName}", nameof(GetAllCharactersFrequency));
             return new OkObjectResult(data);
         }

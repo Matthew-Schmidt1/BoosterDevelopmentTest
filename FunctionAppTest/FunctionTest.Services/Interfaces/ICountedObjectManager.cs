@@ -1,7 +1,7 @@
 ﻿
 namespace FunctionTest.Services.Interfaces
 {
-    internal interface ICountedObjectManager<T> where T : notnull
+    public interface ICountedObjectManager<T> where T : notnull
     {
         void AddItem(T item);
         bool Contains(T item);

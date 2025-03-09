@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FunctionTest.Services
 {
-    internal class WordManagerService : ManagerCountedServiceBase<Word, string>, ICountedObjectManager<string>
+    public class WordManagerService : ManagerCountedServiceBase<Word, string>, ICountedObjectManager<string>
     {
         public WordManagerService( ILoggerFactory loggerFactory) : base(loggerFactory)
         {

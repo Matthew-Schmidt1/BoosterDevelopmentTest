@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FunctionTest.Services
 {
-    internal abstract class ManagerCountedServiceBase<T,K> where T : ICounted<K> where K: notnull
+    public abstract class ManagerCountedServiceBase<T,K> where T : ICounted<K> where K: notnull
     {
         protected ILogger _Logger;
         protected readonly ILoggerFactory _LoggerFactory;
@@ -51,11 +51,11 @@ namespace FunctionTest.Services
             _Logger.LogTrace("Starting {MethodName}",nameof(GetOrderByLength));
             if (Descending)
             {
-                result = getOrderedByLengthDescending(numberToReturn).ToDictionary(k => k.Entry, v => v.Count);
+                result = getOrderedByLengthDescending(numberToReturn).ToDictionary(k => k.Entry, v => v.Length);
             }
             else
             {
-                result = getOrderedByLength(numberToReturn).ToDictionary(k => k.Entry, v => v.Count);
+                result = getOrderedByLength(numberToReturn).ToDictionary(k => k.Entry, v => v.Length);
             }
             _Logger.LogTrace("Finishing {MethodName}",nameof(GetOrderByLength));
             return result;
