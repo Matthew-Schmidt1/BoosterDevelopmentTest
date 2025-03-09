@@ -24,6 +24,18 @@ namespace FunctionTest.Services.Unittest
             ResultsTable results = objectUnderTest.GetLargestWords(5);
             Assert.AreEqual(results.TableData.Count, 1);
         }
+
+        [Test]
+        public async Task TestAddingOneThenResetCountAsync()
+        {
+            await objectUnderTest.ConsumeString("a");
+            ResultsTable results = objectUnderTest.GetLargestWords(5);
+            Assert.AreEqual(results.TableData.Count, 1);
+            objectUnderTest.ResetService();
+            ResultsTable resultsZero= objectUnderTest.GetLargestWords(5);
+            Assert.AreEqual(resultsZero.TableData.Count, 0);
+        }
+
         [Test]
         public async Task TestAddingTwoAsync()
         {

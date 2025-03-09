@@ -146,5 +146,17 @@ namespace FunctionTest
             _Logger.LogDebug("Finishing {MethodName}", nameof(GetAllCharactersFrequency));
             return new OkObjectResult(data);
         }
+
+        [Function("ResetCount")]
+        public IActionResult ResetCount([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
+        {
+            _Logger.LogDebug("Starting {@MethodName}", nameof(ResetCount));
+
+            _StatisticsService.ResetService();
+            
+            _Logger.LogDebug("Finishing {MethodName}", nameof(ResetCount));
+            return new OkResult();
+        }
     }
+}
 }
