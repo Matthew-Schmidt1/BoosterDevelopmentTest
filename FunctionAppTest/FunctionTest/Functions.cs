@@ -3,7 +3,11 @@ using FunctionTest.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
+using System.Net;
 
 
 namespace FunctionTest
@@ -21,7 +25,10 @@ namespace FunctionTest
         }
 
         [Function("GetAll")]
-       
+        [OpenApiOperation(operationId: "GetAll",Description ="Returns all data points")]
+        [OpenApiParameter(name: "BufferSize", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The Buffer size for the buffer to read from the stream")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(ResultsTable[]),
+            Description = "The OK response message containing a JSON result.")]
         public async Task<IActionResult> GetAll([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
         {
             _Logger.LogDebug("Starting {@MethodName}", nameof(GetAll));
@@ -44,6 +51,10 @@ namespace FunctionTest
 
 
         [Function("TotalNumberOfCharactersAndWords")]
+        [OpenApiOperation(operationId: "TotalNumberOfCharactersAndWords",Description = "Returns Total number of characters and words")]
+        [OpenApiParameter(name: "BufferSize", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The Buffer size for the buffer to read from the stream")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(ResultsTable[]),
+            Description = "The OK response message containing a JSON result.")]
         public async Task<IActionResult> TotalNumberOfCharactersAndWords([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
         {
             _Logger.LogDebug("Starting {@MethodName}", nameof(TotalNumberOfCharactersAndWords));
@@ -61,6 +72,11 @@ namespace FunctionTest
         }
 
         [Function("GetLargestWords")]
+        [OpenApiOperation(operationId: "GetLargestWords", Description = "Returns the x largest words")]
+        [OpenApiParameter(name: "BufferSize", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description ="The Buffer size for the buffer to read from the stream")]
+        [OpenApiParameter(name: "Number", In = ParameterLocation.Path, Required = true, Type = typeof(int),Description ="Number of Elements to return so 5 for the 5 largest words")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(ResultsTable[]),
+            Description = "The OK response message containing a JSON result.")]
         public async Task<IActionResult> GetLargestWords([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
         {
             _Logger.LogDebug("Starting {@MethodName}", nameof(GetLargestWords));
@@ -83,6 +99,11 @@ namespace FunctionTest
         }
 
         [Function("GetSmallestWords")]
+        [OpenApiOperation(operationId: "GetSmallestWords", Description = "Returns the x smallest  words")]
+        [OpenApiParameter(name: "BufferSize", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The Buffer size for the buffer to read from the stream")]
+        [OpenApiParameter(name: "Number", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "Number of Elements to return so 5 for the 5 smallest words")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(ResultsTable[]),
+            Description = "The OK response message containing a JSON result.")]
         public async Task<IActionResult> GetSmallestWords([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
         {
             _Logger.LogDebug("Starting {@MethodName}", nameof(GetSmallestWords));
@@ -106,6 +127,11 @@ namespace FunctionTest
         }
 
         [Function("MostFrequencyWord")]
+        [OpenApiOperation(operationId: "MostFrequencyWord", Description = "Returns The x most frequently appearing words")]
+        [OpenApiParameter(name: "BufferSize", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The Buffer size for the buffer to read from the stream")]
+        [OpenApiParameter(name: "Number", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "Number of Elements to return so 5 for the 5 most Frequent words")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(ResultsTable[]),
+            Description = "The OK response message containing a JSON result.")]
         public async Task<IActionResult> MostFrequencyWord([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
         {
             _Logger.LogDebug("Starting {@MethodName}", nameof(MostFrequencyWord));
@@ -129,6 +155,11 @@ namespace FunctionTest
         }
 
         [Function("GetAllCharactersFrequency")]
+        [OpenApiOperation(operationId: "GetAllCharactersFrequency",Description = "Returns a list of all characters appearing" +
+            " in the stream, the frequency with which the characters appear, in descending order of frequency.")]
+        [OpenApiParameter(name: "BufferSize", In = ParameterLocation.Path, Required = true, Type = typeof(int), Description = "The Buffer size for the buffer to read from the stream")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(ResultsTable[]),
+            Description = "The OK response message containing a JSON result.")]
         public async Task<IActionResult> GetAllCharactersFrequency([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
         {
             _Logger.LogDebug("Starting {@MethodName}", nameof(GetAllCharactersFrequency));
@@ -148,6 +179,8 @@ namespace FunctionTest
         }
 
         [Function("ResetCount")]
+        [OpenApiOperation(operationId: "GetAllCharactersFrequency",Description ="Resets the count of all words and characters.")]
+        [OpenApiResponseWithoutBody(HttpStatusCode.OK)]
         public IActionResult ResetCount([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
         {
             _Logger.LogDebug("Starting {@MethodName}", nameof(ResetCount));
@@ -159,4 +192,4 @@ namespace FunctionTest
         }
     }
 }
-}
+
